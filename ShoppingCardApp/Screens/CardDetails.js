@@ -16,4 +16,3 @@ export default function CardDetailScreen({ route }) {
       </View>
     </View>
   );
-}
