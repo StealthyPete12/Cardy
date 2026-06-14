@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/workspaces/Cardy/ShoppingCardApi/ShoppingCardApi.csproj": {}
+    "/Users/timothydeschamps/Desktop/Projects/Cardy/Cardy/ShoppingCardApi/ShoppingCardApi.csproj": {}
   },
   "projects": {
-    "/workspaces/Cardy/ShoppingCardApi/ShoppingCardApi.csproj": {
+    "/Users/timothydeschamps/Desktop/Projects/Cardy/Cardy/ShoppingCardApi/ShoppingCardApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/workspaces/Cardy/ShoppingCardApi/ShoppingCardApi.csproj",
+        "projectUniqueName": "/Users/timothydeschamps/Desktop/Projects/Cardy/Cardy/ShoppingCardApi/ShoppingCardApi.csproj",
         "projectName": "ShoppingCardApi",
-        "projectPath": "/workspaces/Cardy/ShoppingCardApi/ShoppingCardApi.csproj",
-        "packagesPath": "/home/codespace/.nuget/packages/",
-        "outputPath": "/workspaces/Cardy/ShoppingCardApi/obj/",
+        "projectPath": "/Users/timothydeschamps/Desktop/Projects/Cardy/Cardy/ShoppingCardApi/ShoppingCardApi.csproj",
+        "packagesPath": "/Users/timothydeschamps/.nuget/packages/",
+        "outputPath": "/Users/timothydeschamps/Desktop/Projects/Cardy/Cardy/ShoppingCardApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/codespace/.nuget/NuGet/NuGet.Config"
+          "/Users/timothydeschamps/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -24,6 +24,7 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -38,10 +39,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "BCrypt.Net-Next": {
@@ -84,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.200/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
