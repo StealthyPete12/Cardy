@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 
-const BASE = 'http://192.168.18.199/api';
+const BASE = 'https://autopilot-unrelated-drew.ngrok-free.dev';
 
 export async function api(path, options = {}) {
   const token = await SecureStore.getItemAsync('token');
