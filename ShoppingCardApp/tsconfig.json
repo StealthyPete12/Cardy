@@ -3,17 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "bundler",
+    "baseUrl": ".", 
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/assets/*": [
-        "./assets/*"
-      ]
+      "@/*": ["src/*"],
+      "@/assets/*": ["assets/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"]
 }

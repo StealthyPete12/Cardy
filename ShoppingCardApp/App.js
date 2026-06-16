@@ -1,9 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './screens/LoginScreen';
-import WalletScreen from './screens/WalletScreen';
-import CardDetailScreen from './screens/CardDetailScreen';
-import ScanScreen from './screens/ScanScreen';
+import LoginScreen from './Screens/LoginScreen';
+import WalletScreen from './Screens/WalletScreen';
+import CardDetailScreen from './Screens/CardDetails';
+import ScanScreen from './Screens/ScanScreen';
 
 const Stack = createNativeStackNavigator();
 
