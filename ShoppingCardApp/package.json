@@ -1,23 +1,30 @@
 {
-  "name": "shoppingcardapp",
-  "main": "index.js",
+  "name": "ShoppingCardApp",
   "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "reset-project": "node ./scripts/reset-project.js",
+    "lint": "expo lint"
+  },
   "dependencies": {
-    "@expo/ui": "~56.0.17",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "babel-plugin-module-resolver": "^5.0.3",
     "expo": "~56.0.11",
-    "expo-build-properties": "~56.0.18",
     "expo-camera": "~56.0.8",
     "expo-constants": "~56.0.18",
-    "expo-dev-client": "~56.0.20",
     "expo-device": "~56.0.4",
     "expo-font": "~56.0.6",
-    "expo-glass-effect": "~56.0.4",
     "expo-image": "~56.0.11",
     "expo-linking": "~56.0.14",
     "expo-secure-store": "~56.0.4",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
-    "expo-symbols": "~56.0.6",
     "expo-system-ui": "~56.0.5",
     "expo-web-browser": "~56.0.5",
     "react": "19.2.3",
@@ -27,22 +34,8 @@
     "react-native-gesture-handler": "~2.31.1",
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "4.25.2",
+    "react-native-screens": "~4.25.2",
     "react-native-svg": "^15.15.5",
-    "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.8.3"
-  },
-  "devDependencies": {
-    "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "lint": "expo lint"
-  },
-  "private": true
+    "react-native-web": "~0.21.0"
+  }
 }

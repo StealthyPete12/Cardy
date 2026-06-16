@@ -7,10 +7,12 @@
     "icon": "./assets/images/icon.png",
     "scheme": "ShoppingCardApp",
     "userInterfaceStyle": "automatic",
+
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.anonymous.ShoppingCardApp"
     },
+
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -21,10 +23,12 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.ShoppingCardApp"
     },
+
     "web": {
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
+
     "plugins": [
       [
         "expo-splash-screen",
@@ -36,15 +40,7 @@
           }
         }
       ],
-      "expo-secure-store",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "dynamic"
-          }
-        }
-      ]
+      "expo-secure-store"
     ]
   }
 }
