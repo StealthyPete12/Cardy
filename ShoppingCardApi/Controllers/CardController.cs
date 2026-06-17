@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/cards")]
@@ -9,13 +10,13 @@ public class CardsController : ControllerBase
     private readonly CardyDbContext _db;
     public CardsController(CardyDbContext db) => _db = db;
 
-    private int UserId => int.Parse(User.FindFirst("userId")!.Value);
+    private int UserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
     [HttpGet] // list my cards
     public IActionResult GetCards() =>
         Ok(_db.Cards.Where(c => c.UserId == UserId).ToList());
 
-    public record CardDto(string StoreName, string Barcode,
+    public record CardDto(string StoreName, string CardNumber, string Barcode,
                           string BarcodeFormat, string? LogoUrl, string ColorHex);
 
     [HttpPost]
@@ -25,6 +26,7 @@ public class CardsController : ControllerBase
         {
             UserId = UserId,
             StoreName = dto.StoreName,
+            CardNumber = dto.CardNumber,
             Barcode = dto.Barcode,
             BarcodeFormat = dto.BarcodeFormat,
             LogoUrl = dto.LogoUrl,

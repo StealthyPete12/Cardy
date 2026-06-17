@@ -10,11 +10,16 @@ builder.Services.AddDbContext<CardyDbContext>(o => o.UseSqlite("Data Source=Card
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
+    .AddJwtBearer(o =>
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        o.MapInboundClaims = true;
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
     });
 
 builder.Services.AddControllers();
@@ -25,6 +30,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
-    scope.ServiceProvider.GetRequiredService<CardyDbContext>().Database.EnsureCreated();
+{
+    var db = scope.ServiceProvider.GetRequiredService<CardyDbContext>();
+    db.Database.EnsureCreated();
+    DbInitializer.Seed(db);
+}
 
 app.Run();

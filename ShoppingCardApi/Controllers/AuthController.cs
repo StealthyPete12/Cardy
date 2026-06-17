@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var token = new JwtSecurityToken(
-            claims: new[] { new Claim("userId", user.Id.ToString()) },
+            claims: new[] { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) },
             expires: DateTime.UtcNow.AddDays(7),
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
         return new JwtSecurityTokenHandler().WriteToken(token);
