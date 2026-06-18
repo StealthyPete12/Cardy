@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   Modal,
+  Alert,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -25,7 +26,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Barcode from 'react-native-barcode-svg';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_WIDTH * 0.9;
+const CARD_INSET = 32;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_INSET * 2;
+const EXPANDED_CARD_HEIGHT = SCREEN_HEIGHT * 0.75;
 const DISMISS_THRESHOLD = 150;
 
 const FORMAT_MAP = {
@@ -36,28 +39,14 @@ const FORMAT_MAP = {
   'CODE39': 'CODE39',
 };
 
-function formatExpiry(dateStr) {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-}
-
-function DetailRow({ label, value }) {
-  return (
-    <View style={styles.detailRow}>
-      <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
-    </View>
-  );
-}
-
-export default function ExpandedCard({ card, visible, onClose }) {
+export default function ExpandedCard({ card, visible, onClose, onDelete, onCloseStart }) {
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     if (visible) {
+      setLogoError(false);
       translateY.value = withSpring(0, {
         damping: 22,
         stiffness: 200,
@@ -71,10 +60,36 @@ export default function ExpandedCard({ card, visible, onClose }) {
   }, [visible]);
 
   const close = () => {
+    if (onCloseStart) onCloseStart();
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 });
     backdropOpacity.value = withTiming(0, { duration: 250 }, () => {
       runOnJS(onClose)();
     });
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Remove Card',
+      `Remove ${card.storeName} from your wallet?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            const cardId = card.id;
+            if (onCloseStart) onCloseStart();
+            translateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 });
+            backdropOpacity.value = withTiming(0, { duration: 250 }, () => {
+              runOnJS(onClose)();
+            });
+            setTimeout(() => {
+              if (onDelete) onDelete(cardId);
+            }, 350);
+          },
+        },
+      ]
+    );
   };
 
   const panGesture = Gesture.Pan()
@@ -107,7 +122,7 @@ export default function ExpandedCard({ card, visible, onClose }) {
 
   if (!card) return null;
 
-  const barcodeFormat = FORMAT_MAP[card.barcodeType] || card.barcodeType;
+  const barcodeFormat = FORMAT_MAP[card.barcodeType] || 'CODE128';
 
   return (
     <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
@@ -118,74 +133,72 @@ export default function ExpandedCard({ card, visible, onClose }) {
           </Animated.View>
 
           <GestureDetector gesture={panGesture}>
-            <Animated.ScrollView
-              style={[styles.scrollView, contentStyle]}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-              bounces={false}
-            >
-              <View style={styles.dragHandle} />
+            <Animated.View style={[styles.fullScreen, contentStyle]}>
+              <LinearGradient
+                colors={[card.primaryColor, card.secondaryColor]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.safeContent}>
+                <View style={styles.topBar}>
+                  <View style={styles.dragHandleWrap}>
+                    <View style={styles.dragHandle} />
+                  </View>
+                  <Pressable onPress={close} style={styles.closeButton}>
+                    <Text style={styles.closeText}>Done</Text>
+                  </Pressable>
+                </View>
 
-              <View
-                style={[
-                  styles.expandedCard,
-                  { borderRadius: card.cornerRadius || 20 },
-                ]}
-              >
-                <LinearGradient
-                  colors={[card.primaryColor, card.secondaryColor]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { borderRadius: card.cornerRadius || 20 },
-                  ]}
-                />
-                <View style={styles.cardContent}>
-                  <View style={styles.cardTopRow}>
+                <View style={styles.cardInfo}>
+                  {card.logoUrl && !logoError ? (
                     <Image
                       source={{ uri: card.logoUrl }}
                       style={styles.logo}
+                      onError={() => setLogoError(true)}
                     />
-                    <Text
-                      style={[styles.storeName, { color: card.textColor }]}
-                    >
-                      {card.storeName}
-                    </Text>
-                  </View>
+                  ) : (
+                    <View style={styles.logoFallback}>
+                      <Text
+                        style={[
+                          styles.logoInitial,
+                          { color: card.textColor },
+                        ]}
+                      >
+                        {(card.storeName || '?')[0].toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
+                  <Text style={[styles.storeName, { color: card.textColor }]}>
+                    {card.storeName}
+                  </Text>
                   <Text style={[styles.cardNumber, { color: card.textColor }]}>
                     {card.cardNumber}
                   </Text>
                 </View>
-              </View>
 
-              <View style={styles.barcodeContainer}>
-                <Barcode
-                  value={card.barcode}
-                  format={barcodeFormat}
-                  height={80}
-                  lineColor="#000"
-                  backgroundColor="#fff"
-                  maxWidth={CARD_WIDTH - 64}
-                  onError={() => {}}
-                />
-                <Text style={styles.barcodeText}>{card.barcode}</Text>
-              </View>
+                <View style={styles.barcodeSection}>
+                  <View style={styles.barcodeCard}>
+                    <Barcode
+                      value={card.barcode || '0000000000'}
+                      format={barcodeFormat}
+                      height={90}
+                      lineColor="#000"
+                      backgroundColor="#fff"
+                      maxWidth={CARD_WIDTH - 80}
+                      onError={() => {}}
+                    />
+                    <Text style={styles.barcodeText}>
+                      {card.barcode || card.cardNumber}
+                    </Text>
+                  </View>
+                </View>
 
-              <View style={styles.detailsContainer}>
-                {card.holderName ? (
-                  <DetailRow label="Card Holder" value={card.holderName} />
-                ) : null}
-                {card.expiryDate ? (
-                  <DetailRow
-                    label="Expires"
-                    value={formatExpiry(card.expiryDate)}
-                  />
-                ) : null}
-                <DetailRow label="Card Number" value={card.cardNumber || card.barcode} />
-                <DetailRow label="Type" value={card.barcodeType} />
+                <Pressable onPress={handleDelete} style={styles.deleteButton}>
+                  <Text style={styles.deleteText}>Remove Card</Text>
+                </Pressable>
               </View>
-            </Animated.ScrollView>
+            </Animated.View>
           </GestureDetector>
         </View>
       </GestureHandlerRootView>
@@ -194,77 +207,105 @@ export default function ExpandedCard({ card, visible, onClose }) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  overlay: {
-    flex: 1,
-  },
+  root: { flex: 1 },
+  overlay: { flex: 1 },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
-  scrollView: {
+  fullScreen: {
+    height: EXPANDED_CARD_HEIGHT,
+    marginTop: CARD_INSET,
+    marginHorizontal: CARD_INSET,
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  safeContent: {
     flex: 1,
   },
-  scrollContent: {
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 80,
-    paddingBottom: 60,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  dragHandleWrap: {
+    flex: 1,
+    alignItems: 'center',
   },
   dragHandle: {
     width: 40,
     height: 5,
     borderRadius: 3,
     backgroundColor: 'rgba(255,255,255,0.4)',
-    marginBottom: 24,
   },
-  expandedCard: {
-    width: CARD_WIDTH,
-    height: 210,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-    elevation: 12,
+  closeButton: {
+    position: 'absolute',
+    right: 20,
+    top: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
-  cardContent: {
+  closeText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  cardInfo: {
     flex: 1,
-    padding: 28,
-    justifyContent: 'space-between',
-  },
-  cardTopRow: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    gap: 12,
   },
   logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 12,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
     resizeMode: 'contain',
     backgroundColor: 'rgba(255,255,255,0.1)',
+    marginBottom: 8,
+  },
+  logoFallback: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  logoInitial: {
+    fontSize: 28,
+    fontWeight: '700',
   },
   storeName: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '700',
     letterSpacing: 0.5,
+    textAlign: 'center',
   },
   cardNumber: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     letterSpacing: 2.5,
-    opacity: 0.9,
+    opacity: 0.85,
+    textAlign: 'center',
   },
-  barcodeContainer: {
-    width: CARD_WIDTH,
-    marginTop: 20,
+  barcodeSection: {
+    alignItems: 'center',
+    paddingBottom: 24,
+  },
+  barcodeCard: {
+    width: CARD_WIDTH - 32,
     borderRadius: 16,
     backgroundColor: '#fff',
     alignItems: 'center',
     paddingVertical: 24,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -278,30 +319,19 @@ const styles = StyleSheet.create({
     color: '#333',
     letterSpacing: 3,
   },
-  detailsContainer: {
-    width: CARD_WIDTH,
-    marginTop: 20,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    paddingHorizontal: 20,
-    paddingVertical: 4,
+  deleteButton: {
+    alignSelf: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    marginBottom: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,59,48,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,59,48,0.3)',
   },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(255,255,255,0.1)',
-  },
-  detailLabel: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: 'rgba(255,255,255,0.5)',
-  },
-  detailValue: {
-    fontSize: 15,
+  deleteText: {
+    color: '#FF3B30',
+    fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
   },
 });

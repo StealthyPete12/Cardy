@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
+import CardStackLogo from '../Components/CardStackLogo';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -96,7 +97,7 @@ export default function LoginScreen() {
         style={styles.inner}
       >
         <View style={styles.header}>
-          <Text style={styles.brand}>Cardy</Text>
+          <CardStackLogo />
           <Text style={styles.subtitle}>
             {isRegister ? 'Create your account' : 'Welcome back'}
           </Text>
@@ -183,12 +184,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 40,
-  },
-  brand: {
-    fontSize: 42,
-    fontWeight: '800',
-    color: '#fff',
-    letterSpacing: 1,
   },
   subtitle: {
     fontSize: 16,

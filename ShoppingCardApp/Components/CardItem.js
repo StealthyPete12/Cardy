@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -7,6 +7,7 @@ export const CARD_WIDTH = width * 0.9;
 export const CARD_HEIGHT = 210;
 
 export default function CardItem({ card }) {
+  const [logoError, setLogoError] = useState(false);
   const radius = card.cornerRadius || 20;
 
   return (
@@ -21,7 +22,19 @@ export default function CardItem({ card }) {
 
       <View style={styles.content}>
         <View style={styles.topRow}>
-          <Image source={{ uri: card.logoUrl }} style={styles.logo} />
+          {card.logoUrl && !logoError ? (
+            <Image
+              source={{ uri: card.logoUrl }}
+              style={styles.logo}
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <View style={styles.logoFallback}>
+              <Text style={[styles.logoInitial, { color: card.textColor }]}>
+                {(card.storeName || '?')[0].toUpperCase()}
+              </Text>
+            </View>
+          )}
           <Text style={[styles.storeName, { color: card.textColor }]}>
             {card.storeName}
           </Text>
@@ -66,6 +79,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: 'contain',
     backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  logoFallback: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoInitial: {
+    fontSize: 20,
+    fontWeight: '700',
   },
   storeName: {
     fontSize: 22,

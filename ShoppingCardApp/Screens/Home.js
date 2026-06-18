@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import CardStack from '../Components/CardStack';
+import AddCardModal from '../Components/AddCardModal';
 import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -45,41 +46,67 @@ export default function Home() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [addVisible, setAddVisible] = useState(false);
+
+  const fetchCards = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await api('/cards');
+      const rows = Array.isArray(data) ? data : [];
+      setCards(rows.map(mapApiCard));
+    } catch (err) {
+      setError(err.message);
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
 
-      const fetchCards = async () => {
+      const load = async () => {
+        setLoading(true);
         try {
-          setLoading(true);
-          setError(null);
-          console.log('[Home] Fetching cards from API...');
           const data = await api('/cards');
-          console.log('[Home] Raw API response:', JSON.stringify(data));
           if (!cancelled) {
             const rows = Array.isArray(data) ? data : [];
-            const mapped = rows.map(mapApiCard);
-            console.log('[Home] Mapped cards:', JSON.stringify(mapped));
-            setCards(mapped);
+            setCards(rows.map(mapApiCard));
           }
         } catch (err) {
-          console.log('[Home] FETCH CARDS ERROR:', err);
-          if (!cancelled) {
-            setError(err.message);
-          }
+          if (!cancelled) setError(err.message);
         } finally {
-          if (!cancelled) {
-            setLoading(false);
-          }
+          if (!cancelled) setLoading(false);
         }
       };
 
-      fetchCards();
+      load();
       return () => {
         cancelled = true;
       };
     }, [])
+  );
+
+  const handleAddCard = useCallback(
+    async (cardData) => {
+      await api('/cards', {
+        method: 'POST',
+        body: JSON.stringify(cardData),
+      });
+      setAddVisible(false);
+      await fetchCards();
+    },
+    [fetchCards]
+  );
+
+  const handleDeleteCard = useCallback(
+    async (cardId) => {
+      try {
+        await api(`/cards/${cardId}`, { method: 'DELETE' });
+        await fetchCards();
+      } catch (err) {
+        console.log('[Home] DELETE error:', err);
+      }
+    },
+    [fetchCards]
   );
 
   return (
@@ -93,9 +120,17 @@ export default function Home() {
               {cards.length} {cards.length === 1 ? 'card' : 'cards'}
             </Text>
           </View>
-          <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Sign Out</Text>
-          </TouchableOpacity>
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              onPress={() => setAddVisible(true)}
+              style={styles.addButton}
+            >
+              <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
+              <Text style={styles.logoutText}>Sign Out</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {loading ? (
           <View style={styles.centered}>
@@ -109,9 +144,16 @@ export default function Home() {
           <CardStack
             key={cards.map((c) => c.id).join(',')}
             cards={cards}
+            onDeleteCard={handleDeleteCard}
           />
         )}
       </SafeAreaView>
+
+      <AddCardModal
+        visible={addVisible}
+        onClose={() => setAddVisible(false)}
+        onAdd={handleAddCard}
+      />
     </View>
   );
 }
@@ -132,6 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   title: {
     fontSize: 34,
     fontWeight: '800',
@@ -143,6 +190,23 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.5)',
     marginTop: 2,
     fontWeight: '500',
+  },
+  addButton: {
+    marginTop: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonText: {
+    fontSize: 22,
+    fontWeight: '400',
+    color: '#fff',
+    marginTop: -1,
   },
   logoutButton: {
     marginTop: 6,
