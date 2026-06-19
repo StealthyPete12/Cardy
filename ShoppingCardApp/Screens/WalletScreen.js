@@ -3,13 +3,16 @@ import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { api } from '../api';
 
+// List view of all cards — tap to view details, long-press to delete
 export default function WalletScreen({ navigation }) {
   const [cards, setCards] = useState([]);
 
+  // Reload cards every time this screen comes into focus
   useFocusEffect(useCallback(() => {
     api('/cards').then(setCards).catch(console.warn);
   }, []));
 
+  // Confirm before deleting a card
   const remove = (id) =>
     Alert.alert('Delete card?', '', [
       { text: 'Cancel' },
@@ -35,7 +38,7 @@ export default function WalletScreen({ navigation }) {
               borderRadius: 16,
               height: 180,
               padding: 20,
-              marginBottom: -120,        // <-- the overlap creates the wallet stack
+              marginBottom: -120, // Negative margin creates the overlapping wallet stack look
               shadowColor: '#000', shadowOpacity: 0.2,
               shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
               elevation: 4,

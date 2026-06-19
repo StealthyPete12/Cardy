@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+// Available theme colors the user can pick when creating a card
 const COLOR_PRESETS = [
   '#1A1A1A',
   '#D32F2F',
@@ -29,6 +30,7 @@ const COLOR_PRESETS = [
   '#558B2F',
 ];
 
+// Generate a random 12-digit barcode number
 function generateBarcode() {
   const digits = [];
   for (let i = 0; i < 12; i++) {
@@ -37,6 +39,7 @@ function generateBarcode() {
   return digits.join('');
 }
 
+// Bottom sheet modal for adding a new card with store name, number, logo, and color
 export default function AddCardModal({ visible, onClose, onAdd }) {
   const [storeName, setStoreName] = useState('');
   const [cardNumber, setCardNumber] = useState('');

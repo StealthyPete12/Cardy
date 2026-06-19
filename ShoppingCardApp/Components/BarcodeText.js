@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LibreBarcode128_400Regular } from '@expo-google-fonts/libre-barcode-128';
 
+// Renders a barcode using a special font, with the number displayed below it
 export default function BarcodeText({ value, barcodeFontSize = 80, textFontSize = 14 }) {
   const [fontsLoaded] = useFonts({ LibreBarcode128_400Regular });
 

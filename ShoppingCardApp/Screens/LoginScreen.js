@@ -15,6 +15,7 @@ import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 import CardStackLogo from '../Components/CardStackLogo';
 
+// Login/Register screen — toggles between sign-in and account creation
 export default function LoginScreen() {
   const { signIn } = useAuth();
 
@@ -23,6 +24,7 @@ export default function LoginScreen() {
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Send login request and save the returned JWT token
   const login = async () => {
     try {
       setLoading(true);
@@ -32,25 +34,22 @@ export default function LoginScreen() {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log('LOGIN RESPONSE:', response);
-
       const token = response?.token;
 
       if (!token) {
         throw new Error('No token returned from server');
       }
 
-      // ✅ Save + trigger navigation
       await signIn(token);
 
     } catch (err) {
-      console.log('LOGIN ERROR:', err);
       Alert.alert('Login failed', err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
+  // Create a new account and automatically sign in
   const register = async () => {
     try {
       setLoading(true);
@@ -60,8 +59,6 @@ export default function LoginScreen() {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log('REGISTER RESPONSE:', response);
-
       const token = response?.token;
 
       if (!token) {
@@ -69,18 +66,16 @@ export default function LoginScreen() {
       }
 
       Alert.alert('Success', 'Account created!');
-
-      // ✅ Save + navigate
       await signIn(token);
 
     } catch (err) {
-      console.log('REGISTER ERROR:', err);
       Alert.alert('Register failed', err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
+  // Validate inputs then call login or register
   const handleSubmit = () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert('Missing fields', 'Please enter your email and password.');

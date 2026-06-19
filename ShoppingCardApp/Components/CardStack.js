@@ -14,12 +14,13 @@ import CardItem, { CARD_HEIGHT, CARD_WIDTH } from './CardItem';
 import ExpandedCard from './ExpandedCard';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const HEADER_PEEK = 60;
-const EXPANDED_SPACING = CARD_HEIGHT + 20;
+const HEADER_PEEK = 60; // How much of each card is visible when stacked
+const EXPANDED_SPACING = CARD_HEIGHT + 20; // Space between cards when scrolled apart
 const EXPAND_SPRING = { damping: 22, stiffness: 200, mass: 0.8 };
-const PUSHED_DOWN_BASE = SCREEN_HEIGHT * 0.65;
+const PUSHED_DOWN_BASE = SCREEN_HEIGHT * 0.65; // Where cards go when one is selected
 const PUSHED_CARD_SPACING = 18;
 
+// Animated card stack — users can scroll through cards and tap to expand one
 export default function CardStack({ cards, onDeleteCard }) {
   const [selectedCard, setSelectedCard] = useState(null);
 
@@ -68,6 +69,7 @@ export default function CardStack({ cards, onDeleteCard }) {
   );
 }
 
+// Individual card in the stack — handles pan (scroll) and tap (select) gestures
 function WalletCard({ card, index, scrollY, startY, maxScroll, onTap, expandProgress }) {
   const panGesture = Gesture.Pan()
     .activeOffsetY([-5, 5])
@@ -93,6 +95,7 @@ function WalletCard({ card, index, scrollY, startY, maxScroll, onTap, expandProg
 
   const gesture = Gesture.Race(panGesture, tapGesture);
 
+  // Animate between stacked, scrolled, and pushed-down positions
   const animatedStyle = useAnimatedStyle(() => {
     const collapsedY = HEADER_PEEK * index;
     const expandedY = EXPANDED_SPACING * index;

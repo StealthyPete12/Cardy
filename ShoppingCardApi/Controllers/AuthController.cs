@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+// Handles user registration and login — returns a JWT token on success
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
@@ -13,8 +14,10 @@ public class AuthController : ControllerBase
     public AuthController(CardyDbContext db, IConfiguration config)
         { _db = db; _config = config; }
 
+    // Request body for both login and register
     public record AuthDto(string Email, string Password);
 
+    // POST /api/auth/register — create a new account
     [HttpPost("register")]
     public IActionResult Register(AuthDto dto)
     {
@@ -31,6 +34,7 @@ public class AuthController : ControllerBase
         return Ok(new { token = CreateToken(user) });
     }
 
+    // POST /api/auth/login — authenticate and get a token
     [HttpPost("login")]
     public IActionResult Login(AuthDto dto)
     {
@@ -40,6 +44,7 @@ public class AuthController : ControllerBase
         return Ok(new { token = CreateToken(user) });
     }
 
+    // Generate a JWT token that expires in 7 days
     private string CreateToken(User user)
     {
         var key = new SymmetricSecurityKey(

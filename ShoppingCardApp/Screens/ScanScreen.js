@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { api } from '../api';
 import AddCardModal from '../Components/AddCardModal';
 
+// Screen for adding new cards — supports barcode scanning or manual entry
 export default function ScanScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [mode, setMode] = useState(null); // null = chooser, 'scan', 'manual'
@@ -11,6 +12,7 @@ export default function ScanScreen({ navigation }) {
   const [storeName, setStoreName] = useState('');
   const [manualVisible, setManualVisible] = useState(false);
 
+  // Save the card to the API then go back to the previous screen
   const handleAdd = async (card) => {
     await api('/cards', {
       method: 'POST',
@@ -19,10 +21,12 @@ export default function ScanScreen({ navigation }) {
     navigation.goBack();
   };
 
+  // Called automatically when the camera detects a barcode
   const handleBarCodeScanned = ({ data, type }) => {
     setScanned({ data, type });
   };
 
+  // Save the scanned barcode as a new card
   const saveScanned = async () => {
     if (!storeName.trim()) return;
     await api('/cards', {
@@ -39,7 +43,7 @@ export default function ScanScreen({ navigation }) {
     navigation.goBack();
   };
 
-  // Chooser: pick scan or manual
+  // Step 1: Let user choose between scanning or manual entry
   if (mode === null) {
     return (
       <View style={styles.chooser}>
@@ -86,7 +90,7 @@ export default function ScanScreen({ navigation }) {
     );
   }
 
-  // Manual entry mode
+  // Manual entry — show the add card form
   if (mode === 'manual') {
     return (
       <View style={{ flex: 1, backgroundColor: '#000' }}>
@@ -102,7 +106,7 @@ export default function ScanScreen({ navigation }) {
     );
   }
 
-  // Scan mode - permission denied fallback
+  // Camera permission denied — offer retry or manual entry
   if (!permission?.granted) {
     return (
       <View style={styles.chooser}>
@@ -129,7 +133,7 @@ export default function ScanScreen({ navigation }) {
     );
   }
 
-  // Scan mode - result captured
+  // Barcode detected — show the result and ask for the store name
   if (scanned) {
     return (
       <View style={styles.resultContainer}>
@@ -156,7 +160,7 @@ export default function ScanScreen({ navigation }) {
     );
   }
 
-  // Scan mode - camera active
+  // Camera is active — scanning for barcodes
   return (
     <View style={{ flex: 1 }}>
       <CameraView

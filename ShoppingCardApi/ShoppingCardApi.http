@@ -1,4 +1,4 @@
-@ShoppingCardApi_HostAddress = http://localhost:5234
+@ShoppingCardApi_HostAddress = "localhost"
 
 GET {{ShoppingCardApi_HostAddress}}/weatherforecast/
 Accept: application/json

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
+// Entity Framework database context — connects the app to the SQLite database
 public class CardyDbContext : DbContext
 {
     public CardyDbContext(DbContextOptions<CardyDbContext> options) : base(options) { }
@@ -8,6 +9,7 @@ public class CardyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Each card belongs to one user (one-to-many relationship)
         modelBuilder.Entity<Card>()
             .HasOne(c => c.User)
             .WithMany(u => u.Cards)

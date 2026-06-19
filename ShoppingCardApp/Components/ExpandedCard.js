@@ -29,9 +29,10 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_INSET = 32;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_INSET * 2;
 const EXPANDED_CARD_HEIGHT = SCREEN_HEIGHT * 0.75;
-const DISMISS_THRESHOLD = 150;
+const DISMISS_THRESHOLD = 150; // How far to drag down before the card dismisses
 
-
+// Full-screen card overlay — shows card details, barcode, and delete option
+// Can be dismissed by tapping "Done", swiping down, or tapping the backdrop
 export default function ExpandedCard({ card, visible, onClose, onDelete, onCloseStart }) {
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
@@ -85,6 +86,7 @@ export default function ExpandedCard({ card, visible, onClose, onDelete, onClose
     );
   };
 
+  // Swipe down to dismiss — only tracks downward movement
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
       if (event.translationY > 0) {

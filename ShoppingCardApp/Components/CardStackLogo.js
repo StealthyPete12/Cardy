@@ -18,6 +18,7 @@ const CARD_WIDTH = SCREEN_WIDTH * 0.38;
 const CARD_HEIGHT = CARD_WIDTH * 1.55;
 const BORDER_WIDTH = 2.5;
 
+// Three decorative cards fanned out behind the "Cardy" brand name
 const CARDS = [
   { color: '#1565C0', rotation: -14 },
   { color: '#2E7D32', rotation: 0 },
@@ -30,6 +31,7 @@ const SPRING_CONFIG = {
   mass: 0.8,
 };
 
+// A single animated card in the fan — springs in on mount and floats gently
 function DecorativeCard({ color, targetRotation, index, reducedMotion }) {
   const progress = useSharedValue(reducedMotion ? 1 : 0);
   const idle = useSharedValue(0);
@@ -81,6 +83,7 @@ function DecorativeCard({ color, targetRotation, index, reducedMotion }) {
   );
 }
 
+// Animated logo shown on the login screen — three fanned cards with "Cardy" text
 export default function CardStackLogo() {
   const logoOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.8);

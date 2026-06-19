@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
+// CRUD operations for shopping/loyalty cards — all endpoints require authentication
 [ApiController]
 [Route("api/cards")]
 [Authorize]
@@ -10,18 +11,23 @@ public class CardsController : ControllerBase
     private readonly CardyDbContext _db;
     public CardsController(CardyDbContext db) => _db = db;
 
+    // Get the logged-in user's ID from the JWT token
     private int UserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-    [HttpGet] // list my cards
+    // GET /api/cards — return all cards belonging to the current user
+    [HttpGet]
     public IActionResult GetCards() =>
         Ok(_db.Cards.Where(c => c.UserId == UserId).ToList());
 
+    // Request body for creating a new card
     public record CardDto(string StoreName, string? CardNumber, string? Barcode,
                           string? BarcodeFormat, string? LogoUrl, string ColorHex);
 
+    // POST /api/cards — add a new card to the user's wallet
     [HttpPost]
     public IActionResult AddCard(CardDto dto)
     {
+        // If no barcode is provided, generate a random 12-digit one
         var barcode = string.IsNullOrWhiteSpace(dto.Barcode)
             ? GenerateBarcode()
             : dto.Barcode;
@@ -41,6 +47,7 @@ public class CardsController : ControllerBase
         return Ok(card);
     }
 
+    // Generate a random 12-digit barcode number
     private static string GenerateBarcode()
     {
         var rng = new Random();
@@ -50,6 +57,7 @@ public class CardsController : ControllerBase
         return new string(digits);
     }
 
+    // DELETE /api/cards/{id} — remove a card (only if it belongs to the current user)
     [HttpDelete("{id}")]
     public IActionResult DeleteCard(int id)
     {

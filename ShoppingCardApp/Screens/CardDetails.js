@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import BarcodeText from '../Components/BarcodeText';
 
+// Full-screen card detail view — shows the store name and scannable barcode
 export default function CardDetailScreen({ route }) {
   const { card } = route.params;
 

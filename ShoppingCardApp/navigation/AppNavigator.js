@@ -13,24 +13,29 @@ import ScanScreen from '../Screens/ScanScreen';
 
 const Stack = createNativeStackNavigator();
 
+// Decode the JWT payload to check if the token has expired
 function isTokenExpired(token) {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return true;
+    // Decode base64url payload
     let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
     while (payload.length % 4) payload += '=';
     const decoded = JSON.parse(atob(payload));
     if (!decoded.exp) return false;
+    // exp is in seconds, Date.now() is in milliseconds
     return decoded.exp * 1000 < Date.now();
   } catch {
     return true;
   }
 }
 
+// Main navigator — handles auth state and shows either Login or the main app screens
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
 
+  // On app launch, check if a valid token exists in secure storage
   useEffect(() => {
     const loadToken = async () => {
       try {
@@ -38,6 +43,7 @@ export default function AppNavigator() {
         if (token && !isTokenExpired(token)) {
           setUserToken(token);
         } else if (token) {
+          // Token expired — remove it so the user has to log in again
           await SecureStore.deleteItemAsync('token');
         }
       } catch (e) {
@@ -50,6 +56,7 @@ export default function AppNavigator() {
     loadToken();
   }, []);
 
+  // Auth functions shared with all screens via context
   const auth = useMemo(
     () => ({
       signIn: async (token) => {
@@ -89,6 +96,7 @@ export default function AppNavigator() {
   return (
     <AuthContext.Provider value={auth}>
       <NavigationContainer>
+        {/* Show Login if not authenticated, otherwise show the main app */}
         <Stack.Navigator screenOptions={{ headerShown: false }}>
 
           {userToken == null ? (

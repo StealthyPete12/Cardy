@@ -14,6 +14,7 @@ import AddCardModal from '../Components/AddCardModal';
 import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 
+// Make a hex color slightly lighter — used for card gradient effect
 function lightenHex(hex, amount = 30) {
   if (!hex) return '#ECECEC';
   const num = parseInt(hex.replace('#', ''), 16);
@@ -23,6 +24,7 @@ function lightenHex(hex, amount = 30) {
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
 }
 
+// Convert API response data into the format our card components expect
 function mapApiCard(card, index) {
   const color = card.colorHex || '#DCDCDC';
   return {
@@ -41,6 +43,7 @@ function mapApiCard(card, index) {
   };
 }
 
+// Main screen — shows the card stack and handles adding/deleting cards
 export default function Home() {
   const { signOut } = useAuth();
   const [cards, setCards] = useState([]);
@@ -59,6 +62,7 @@ export default function Home() {
     }
   }, []);
 
+  // Fetch cards from the API every time this screen comes into focus
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;

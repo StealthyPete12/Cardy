@@ -6,6 +6,7 @@ const { width } = Dimensions.get('window');
 export const CARD_WIDTH = width * 0.9;
 export const CARD_HEIGHT = 210;
 
+// A single card in the stack — shows a gradient background, store logo, name, and number
 export default function CardItem({ card }) {
   const [logoError, setLogoError] = useState(false);
   const radius = card.cornerRadius || 20;
