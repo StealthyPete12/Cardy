@@ -19,9 +19,9 @@ const CARD_HEIGHT = CARD_WIDTH * 1.55;
 const BORDER_WIDTH = 2.5;
 
 const CARDS = [
-  { color: '#7EB8E0', rotation: -14 },
-  { color: '#7EC8A0', rotation: 0 },
-  { color: '#B89EDB', rotation: 14 },
+  { color: '#1565C0', rotation: -14 },
+  { color: '#2E7D32', rotation: 0 },
+  { color: '#F57C00', rotation: 14 },
 ];
 
 const SPRING_CONFIG = {

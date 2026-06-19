@@ -16,25 +16,38 @@ public class CardsController : ControllerBase
     public IActionResult GetCards() =>
         Ok(_db.Cards.Where(c => c.UserId == UserId).ToList());
 
-    public record CardDto(string StoreName, string CardNumber, string Barcode,
-                          string BarcodeFormat, string? LogoUrl, string ColorHex);
+    public record CardDto(string StoreName, string? CardNumber, string? Barcode,
+                          string? BarcodeFormat, string? LogoUrl, string ColorHex);
 
     [HttpPost]
     public IActionResult AddCard(CardDto dto)
     {
+        var barcode = string.IsNullOrWhiteSpace(dto.Barcode)
+            ? GenerateBarcode()
+            : dto.Barcode;
+
         var card = new Card
         {
             UserId = UserId,
             StoreName = dto.StoreName,
-            CardNumber = dto.CardNumber,
-            Barcode = dto.Barcode,
-            BarcodeFormat = dto.BarcodeFormat,
+            CardNumber = string.IsNullOrWhiteSpace(dto.CardNumber) ? barcode : dto.CardNumber,
+            Barcode = barcode,
+            BarcodeFormat = string.IsNullOrWhiteSpace(dto.BarcodeFormat) ? "CODE128" : dto.BarcodeFormat,
             LogoUrl = dto.LogoUrl,
             ColorHex = dto.ColorHex
         };
         _db.Cards.Add(card);
         _db.SaveChanges();
         return Ok(card);
+    }
+
+    private static string GenerateBarcode()
+    {
+        var rng = new Random();
+        var digits = new char[12];
+        for (int i = 0; i < 12; i++)
+            digits[i] = (char)('0' + rng.Next(10));
+        return new string(digits);
     }
 
     [HttpDelete("{id}")]

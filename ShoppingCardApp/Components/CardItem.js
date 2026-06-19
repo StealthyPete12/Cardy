@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 export const CARD_WIDTH = width * 0.9;
@@ -12,12 +12,15 @@ export default function CardItem({ card }) {
 
   return (
     <View style={[styles.card, { borderRadius: radius }]}>
-      <LinearGradient
-        colors={[card.primaryColor, card.secondaryColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[StyleSheet.absoluteFill, { borderRadius: radius }]}
-      />
+      <Svg style={[StyleSheet.absoluteFill, { borderRadius: radius }]}>
+        <Defs>
+          <LinearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor={card.primaryColor} />
+            <Stop offset="1" stopColor={card.secondaryColor} />
+          </LinearGradient>
+        </Defs>
+        <Rect width="100%" height="100%" fill="url(#grad)" />
+      </Svg>
       <View style={[styles.shimmer, { borderRadius: radius }]} />
 
       <View style={styles.content}>

@@ -22,8 +22,8 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-import { LinearGradient } from 'expo-linear-gradient';
-import Barcode from 'react-native-barcode-svg';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
+import BarcodeText from './BarcodeText';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_INSET = 32;
@@ -31,13 +31,6 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_INSET * 2;
 const EXPANDED_CARD_HEIGHT = SCREEN_HEIGHT * 0.75;
 const DISMISS_THRESHOLD = 150;
 
-const FORMAT_MAP = {
-  'EAN-13': 'EAN13',
-  'EAN-8': 'EAN8',
-  'UPC-A': 'UPC',
-  'CODE128': 'CODE128',
-  'CODE39': 'CODE39',
-};
 
 export default function ExpandedCard({ card, visible, onClose, onDelete, onCloseStart }) {
   const translateY = useSharedValue(SCREEN_HEIGHT);
@@ -122,8 +115,6 @@ export default function ExpandedCard({ card, visible, onClose, onDelete, onClose
 
   if (!card) return null;
 
-  const barcodeFormat = FORMAT_MAP[card.barcodeType] || 'CODE128';
-
   return (
     <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
       <GestureHandlerRootView style={styles.root}>
@@ -134,12 +125,15 @@ export default function ExpandedCard({ card, visible, onClose, onDelete, onClose
 
           <GestureDetector gesture={panGesture}>
             <Animated.View style={[styles.fullScreen, contentStyle]}>
-              <LinearGradient
-                colors={[card.primaryColor, card.secondaryColor]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
+              <Svg style={StyleSheet.absoluteFill}>
+                <Defs>
+                  <LinearGradient id="expandedGrad" x1="0" y1="0" x2="1" y2="1">
+                    <Stop offset="0" stopColor={card.primaryColor} />
+                    <Stop offset="1" stopColor={card.secondaryColor} />
+                  </LinearGradient>
+                </Defs>
+                <Rect width="100%" height="100%" fill="url(#expandedGrad)" />
+              </Svg>
               <View style={styles.safeContent}>
                 <View style={styles.topBar}>
                   <View style={styles.dragHandleWrap}>
@@ -179,18 +173,7 @@ export default function ExpandedCard({ card, visible, onClose, onDelete, onClose
 
                 <View style={styles.barcodeSection}>
                   <View style={styles.barcodeCard}>
-                    <Barcode
-                      value={card.barcode || '0000000000'}
-                      format={barcodeFormat}
-                      height={90}
-                      lineColor="#000"
-                      backgroundColor="#fff"
-                      maxWidth={CARD_WIDTH - 80}
-                      onError={() => {}}
-                    />
-                    <Text style={styles.barcodeText}>
-                      {card.barcode || card.cardNumber}
-                    </Text>
+                    <BarcodeText value={card.barcode || card.cardNumber || '0000000000'} />
                   </View>
                 </View>
 
@@ -311,13 +294,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 6,
-  },
-  barcodeText: {
-    marginTop: 12,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    letterSpacing: 3,
   },
   deleteButton: {
     alignSelf: 'center',

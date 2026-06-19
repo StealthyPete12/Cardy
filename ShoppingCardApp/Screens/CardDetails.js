@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import Barcode from 'react-native-barcode-svg';
+import BarcodeText from '../Components/BarcodeText';
 
 export default function CardDetailScreen({ route }) {
   const { card } = route.params;
@@ -22,17 +22,11 @@ export default function CardDetailScreen({ route }) {
           backgroundColor: '#fff',
           borderRadius: 12,
           padding: 20,
-          marginTop: 40
+          marginTop: 40,
+          alignItems: 'center',
         }}
       >
-        <Barcode
-          value={card.barcode}
-          format={card.barcodeFormat}
-          height={90}
-        />
-        <Text style={{ textAlign: 'center', marginTop: 8 }}>
-          {card.barcode}
-        </Text>
+        <BarcodeText value={card.barcode || card.cardNumber} />
       </View>
     </View>
   );

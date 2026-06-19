@@ -40,6 +40,13 @@
           }
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Cardy needs camera access to scan loyalty card barcodes.",
+          "barcodeScannerEnabled": true
+        }
+      ],
       "expo-secure-store"
     ]
   }
