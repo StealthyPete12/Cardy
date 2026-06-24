@@ -17,11 +17,13 @@ Built with React Native (Expo) on the frontend and ASP.NET Core on the backend.
 ## Screenshots
 
 <p align="center">
-  <img src="./screenshots/login.png" alt="Login Screen" width="250"/>
+  <img src="./assets/Login.png" alt="Login Screen" width="250"/>
   &nbsp;&nbsp;
-  <img src="./screenshots/wallet.png" alt="Wallet Screen" width="250"/>
+  <img src="./assets/Card Stack 1.png" alt="Wallet Screen" width="250"/>
   &nbsp;&nbsp;
-  <img src="./screenshots/card-detail.png" alt="Card Detail" width="250"/>
+  <img src="./assets/Card stack 2.png" alt="Wallet Screen" width="250"/>
+  &nbsp;&nbsp;
+  <img src="./assets/Card.png" alt="Card Detail" width="250"/>
 </p>
 
 ## Architecture
