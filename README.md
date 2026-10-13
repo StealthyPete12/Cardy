@@ -75,12 +75,21 @@ The steps below follow the order a user goes through the app, from opening it fo
 
 ## Tech Stack
 
+### Mobile app
+
+| Tool / Technology | What it is (plain English) | Why we used it |
+|---|---|---|
 | **React Native** | A toolkit for building phone apps for both iPhone and Android from one set of code | We only had to write the app once to run on both platforms |
 | **Expo** | A set of ready-made tools that sits on top of React Native and makes building and testing apps easier | Gave us the camera, secure storage and fonts without complex setup |
 | **Expo Camera** | The part of Expo that lets the app use the phone's camera | Used to scan barcodes on physical cards |
 | **Expo SecureStore** | A locked storage area on the phone for sensitive information | Keeps the login pass safe on the device |
 | **React Navigation** | A tool that manages moving between screens in the app | Handles switching between login, wallet and scanning screens |
 | **React Native Reanimated & Gesture Handler** | Tools for smooth animations and finger gestures like swipes and drags | Powers the wallet-style card stack and swipe-to-close |
+
+### Server
+
+| Tool / Technology | What it is (plain English) | Why we used it |
+|---|---|---|
 | **ASP.NET Core (.NET 10)** | Microsoft's framework (a ready-made foundation) for building server programs | Runs the REST API that the app talks to |
 | **Entity Framework Core** | A translator between the server's code and the database | Lets us save and load data without writing raw database commands |
 | **SQLite** | A small database stored in a single file, like a compact digital filing cabinet | Simple, needs no separate database server |
