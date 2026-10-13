@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShoppingCardApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7126cf1ac155b8e069cbbcfc584006a2260d8037")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06c159b02623ceb7823bf5e23f1f30871092e47b")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShoppingCardApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShoppingCardApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
