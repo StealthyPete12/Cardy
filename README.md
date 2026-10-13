@@ -99,14 +99,12 @@ The steps below follow the order a user goes through the app, from opening it fo
 ## Future Improvements
 
 ### Short term
-- **Store the real barcode for manually added cards.** Let users type the actual barcode number. *Benefit:* manually added cards would scan at the till.
-- **Draw barcodes in their original style.** Use a barcode library that supports EAN-13, UPC, QR and others. *Benefit:* more stores' scanners would accept the barcode on screen.
 - **Edit existing cards.** Add an "edit" option for the name, number, colour and logo. *Benefit:* no more deleting and re-adding cards to fix mistakes.
 - **Keep a copy of cards on the phone.** Save cards on the device so they load without a connection. *Benefit:* your cards work even with no signal in the shop.
 
 ### Long term
 - **Host the server online.** Move the API and database to a cloud service and use a larger database such as PostgreSQL. *Benefit:* anyone could download and use Cardy, on any network.
-- **Add to Apple Wallet.** The server already includes a tool for creating Apple Wallet passes, but it isn't used yet (TODO: confirm this is the plan). *Benefit:* cards could appear in the phone's built-in wallet and on the lock screen.
+- **Add to Apple Wallet.** The server already includes a tool for creating Apple Wallet passes, but it isn't used yet. *Benefit:* cards could appear in the phone's built-in wallet and on the lock screen.
 - **Automatic store logos.** Look up a store's logo from its name. *Benefit:* cards look polished without users hunting for logo links.
 - **Account features.** Add password reset, changing your email and the option to delete your account. *Benefit:* users stay in control of their accounts.
 - **Stronger security.** Require a proper secret key, switch on the full checks for login passes, and add a way to log out of all devices. *Benefit:* the app is safe enough for real users and their data.
